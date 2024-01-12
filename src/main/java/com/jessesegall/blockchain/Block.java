@@ -56,16 +56,6 @@ public class Block {
 
     }
 
-    //Increase nonce until the hash target is reached
-
-    public void mineBlock(int difficulty){
-        String target = new String(new char[difficulty]).replace('\0', '0');
-        while(!hash.substring(0, difficulty).equals(target)){
-            nonce++;
-            hash = calculateHash();
-        }
-        System.out.println("Block Mined :" + hash);
-    }
 
     // Getters and setters
     public String getHash() {
