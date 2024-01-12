@@ -25,7 +25,7 @@ public class BlockTest {
     void testCalculateHash() {
         String calculatedHash = block.calculateHash();
         assertNotNull(calculatedHash);
-        // You can add more assertions to validate the structure or length of the hash
+
     }
 
     @Test
@@ -63,5 +63,5 @@ public class BlockTest {
     }
 
 
-    // Add more tests for other functionalities as needed
+
 }
