@@ -66,12 +66,28 @@ public class Block {
         return previousHash;
     }
 
+    public void setPreviousHash(String previousHash) {
+        this.previousHash = previousHash;
+    }
+
+    public void setTimeStamp(long timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
+    public void setNonce(int nonce) {
+        this.nonce = nonce;
+    }
+
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
+    }
+
     public long getTimeStamp() {
         return timeStamp;
     }
 
-    public List<Transaction> getTransactions() {
-        return transactions;
+    public String getTransactions() {
+        return transactions.toString();
     }
 
     public int getNonce() {

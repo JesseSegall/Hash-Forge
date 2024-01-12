@@ -22,7 +22,7 @@ public class ProofOfWork {
 
     //Double hashing
     private String calculatedDoubleHash(Block block){
-        String input = block.getPreviousHash() + Long.toString(block.getTimeStamp()) + Integer.toString(block.getNonce()) + block.getTransactions().toString();
+        String input = block.getPreviousHash() + Long.toString(block.getTimeStamp()) + Integer.toString(block.getNonce()) + block.getTransactions();
         String hashedOnce = Block.applySha256(input);
         return Block.applySha256(hashedOnce);
     }
