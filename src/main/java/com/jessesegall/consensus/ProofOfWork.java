@@ -1,6 +1,7 @@
 package com.jessesegall.consensus;
 
 import com.jessesegall.blockchain.Block;
+import com.jessesegall.blockchain.BlockchainUtils;
 
 // Proof-of-work algorithm.
 public class ProofOfWork {
@@ -23,8 +24,8 @@ public class ProofOfWork {
     //Double hashing
     private String calculatedDoubleHash(Block block){
         String input = block.getPreviousHash() + Long.toString(block.getTimeStamp()) + Integer.toString(block.getNonce()) + block.getTransactions();
-        String hashedOnce = Block.applySha256(input);
-        return Block.applySha256(hashedOnce);
+        String hashedOnce = BlockchainUtils.applySha256(input);
+        return BlockchainUtils.applySha256(hashedOnce);
     }
 
     // Validates if the block's hash meets the required difficulty level
