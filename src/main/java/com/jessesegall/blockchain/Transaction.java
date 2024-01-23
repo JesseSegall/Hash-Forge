@@ -5,6 +5,8 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 public class Transaction {
     // TODO this is just a placeholder value, constants will be set in Blockchain class
     public static final float minimumTransaction = 0.1f;
@@ -45,6 +47,41 @@ public class Transaction {
         signature = BlockchainUtils.applyECDSASig(privateKey, data);
     }
 
+    public boolean processTransaction(UTXOManager utxoManager){
+        if (!verifySignature()){
+            System.out.println("Transaction Signature failed to verify");
+            return false;
+        }
+        //Get transaction inputs make sure they are unspent
+        for(TransactionInput i : inputs){
+            i.setUTXO(utxoManager.getUTXO(i.getTransactionOutputId()));
+        }
+
+        //check if transaction is valid:
+        if(getInputsValue() < minimumTransaction) {
+            System.out.println("Transaction Inputs too small: " + getInputsValue());
+            return false;
+        }
+        //generate transaction outputs:
+        float leftOver = getInputsValue() - value;
+        transactionId = calculateHash();
+        outputs.add(new TransactionOutput(this.recipient, value, transactionId));
+        if (leftOver > 0) {
+            outputs.add(new TransactionOutput(this.sender, leftOver, transactionId)); // send the 'change' back to sender
+        }
+
+        // Update the UTXO set for the new transaction outputs
+        outputs.forEach(utxoManager::addUTXO);
+
+        // Remove the spent transaction inputs from the UTXO list
+        inputs.stream()
+                .map(TransactionInput::getUTXO)
+                .filter(Objects::nonNull)
+                .forEach(utxo -> utxoManager.removeUTXO(utxo.getId()));
+
+        return true;
+    }
+
     //Verifies any data that has been signed hasn't been tampered with
     public boolean verifySignature(){
         String data = BlockchainUtils.getStringFromKey(sender) +
@@ -53,44 +90,7 @@ public class Transaction {
         return BlockchainUtils.verifyECDSASig(sender, data, signature);
     }
 
-    public boolean processTransaction() {
-        if (!verifySignature()) {
-            System.out.println("#Transaction Signature failed to verify");
-            return false;
-        }
 
-        // Gather transaction inputs (Make sure they are unspent):
-        for (TransactionInput i : inputs) {
-            //TODO
-            //i.setUTXO(i.transactionOutputID);
-        }
-
-        // Check if transaction is valid:
-        if (getInputsValue() < minimumTransaction) {
-            System.out.println("#Transaction Inputs too small: " + getInputsValue());
-            return false;
-        }
-
-        // Generate transaction outputs:
-        float leftOver = getInputsValue() - value; // get value of inputs then the leftover change
-        transactionId = calculateHash();
-        outputs.add(new TransactionOutput(this.recipient, value, transactionId)); // send value to recipient
-        outputs.add(new TransactionOutput(this.sender, leftOver, transactionId)); // send the left over 'change' back to sender
-
-        // Add outputs to Unspent list
-        for (TransactionOutput o : outputs) {
-            // TODO: add the TransactionOutputs to the UTXO list
-        }
-
-        // Remove transaction inputs from UTXO lists as spent:
-        for (TransactionInput i : inputs) {
-            if (i.getUTXO() != null) {
-                // TODO: remove the UTXO from the list of unspent transaction outputs
-            }
-        }
-
-        return true;
-    }
     public float getInputsValue() {
         float total = 0;
         for(TransactionInput i : inputs) {

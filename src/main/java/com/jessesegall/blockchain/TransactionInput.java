@@ -1,9 +1,13 @@
 package com.jessesegall.blockchain;
 
+
 public class TransactionInput {
     private String transactionOutputId;
-    private TransactionOutput UTXO; // Unspent transaction output
+    private TransactionOutput UTXO;
 
+    public TransactionInput(String transactionOutputId) {
+        this.transactionOutputId = transactionOutputId;
+    }
     public void setUTXO(TransactionOutput UTXO){
         this.UTXO = UTXO;
     }

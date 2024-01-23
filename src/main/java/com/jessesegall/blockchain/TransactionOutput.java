@@ -20,6 +20,7 @@ public class TransactionOutput {
                         parentTransactionId
         );
     }
+// make getters and setters for all fields
 
     public boolean isMine(PublicKey publicKey){
         return (publicKey.equals(recipient));
