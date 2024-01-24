@@ -31,6 +31,38 @@ public class Blockchain {
         chain.add(genesis);
     }
 
+    public static Blockchain getInstance() {
+        return instance;
+    }
+
+    public static void setInstance(Blockchain instance) {
+        Blockchain.instance = instance;
+    }
+
+    public List<Block> getChain() {
+        return chain;
+    }
+
+    public void setChain(List<Block> chain) {
+        this.chain = chain;
+    }
+
+    public ProofOfWork getProofOfWork() {
+        return proofOfWork;
+    }
+
+    public void setProofOfWork(ProofOfWork proofOfWork) {
+        this.proofOfWork = proofOfWork;
+    }
+
+    public UTXOManager getUtxoManager() {
+        return utxoManager;
+    }
+
+    public void setUtxoManager(UTXOManager utxoManager) {
+        this.utxoManager = utxoManager;
+    }
+
     public boolean addBlock(Block block) {
         if (validateNewBlock(block, getLastBlock())) {
             chain.add(block);
