@@ -14,7 +14,7 @@ public class Block {
     private List<Transaction> transactions;
 
     //Block constructor
-    public  Block(String previousHash, List<Transaction>transactions){
+    public Block(String previousHash, List<Transaction> transactions) {
         this.previousHash = previousHash;
         this.transactions = transactions;
         this.timeStamp = new Date().getTime();
@@ -22,10 +22,23 @@ public class Block {
     }
 
     public String calculateHash() {
+        String transactionDetails = transactions.stream()
+                .map(Transaction::getTransactionID)
+                .reduce("", String::concat);
+
         String input = previousHash + Long.toString(timeStamp) + Integer.toString(nonce) + transactions.toString();
         return BlockchainUtils.applySha256(input);
     }
 
+    // Invalidate whole block if any transaction is not valid
+    public boolean validateTransactions(UTXOManager utxoManager) {
+        for (Transaction transaction : transactions) {
+            if (!transaction.processTransaction(utxoManager)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     // Getters and setters
     public String getHash() {
@@ -56,8 +69,8 @@ public class Block {
         return timeStamp;
     }
 
-    public String getTransactions() {
-        return transactions.toString();
+    public List<Transaction> getTransactions() {
+        return transactions;
     }
 
     public int getNonce() {
