@@ -2,6 +2,7 @@ package com.jessesegall.blockchain;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 // Represents a single block.
 public class Block {
@@ -23,10 +24,11 @@ public class Block {
 
     public String calculateHash() {
         String transactionDetails = transactions.stream()
-                .map(Transaction::getTransactionID)
+                .map(Transaction::getTransactionId)
+                .filter(Objects::nonNull)
                 .reduce("", String::concat);
 
-        String input = previousHash + Long.toString(timeStamp) + Integer.toString(nonce) + transactions.toString();
+        String input = previousHash + timeStamp + nonce + transactionDetails;
         return BlockchainUtils.applySha256(input);
     }
 
