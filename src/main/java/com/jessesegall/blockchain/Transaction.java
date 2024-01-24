@@ -21,7 +21,7 @@ public class Transaction {
 
     private static int sequence = 0;
 
-    public Transaction(PublicKey from, PublicKey to, float value, List<TransactionInput> inputs){
+    public Transaction(PublicKey from, PublicKey to, float value, List<TransactionInput> inputs) {
         this.sender = from;
         this.recipient = to;
         this.value = value;
@@ -30,35 +30,41 @@ public class Transaction {
 
     // Calculates transaction hash which will be used for its ID
 
-    private String calculateHash(){
+    private String calculateHash() {
         sequence++;
         return BlockchainUtils.applySha256(
-        BlockchainUtils.getStringFromKey(sender) +
-                BlockchainUtils.getStringFromKey(recipient)+
-                Float.toString(value) + sequence
+                BlockchainUtils.getStringFromKey(sender) +
+                        BlockchainUtils.getStringFromKey(recipient) +
+                        Float.toString(value) + sequence
         );
     }
 
     //Signs all data that shouldn't be messed with
-    public void generateSignature(PrivateKey privateKey){
+    public void generateSignature(PrivateKey privateKey) {
         String data = BlockchainUtils.getStringFromKey(sender) +
                 BlockchainUtils.getStringFromKey(recipient) +
                 Float.toString(value);
         signature = BlockchainUtils.applyECDSASig(privateKey, data);
     }
 
-    public boolean processTransaction(UTXOManager utxoManager){
-        if (!verifySignature()){
+    public boolean processTransaction(UTXOManager utxoManager) {
+        if (!verifySignature()) {
             System.out.println("Transaction Signature failed to verify");
             return false;
         }
         //Get transaction inputs make sure they are unspent
-        for(TransactionInput i : inputs){
-            i.setUTXO(utxoManager.getUTXO(i.getTransactionOutputId()));
+        for (TransactionInput i : inputs) {
+            TransactionOutput utxo = utxoManager.getUTXO(i.getTransactionOutputId());
+            if (utxo == null) {
+                System.out.println("No UTXO found for input: " + i.getTransactionOutputId());
+                return false;
+            }
+            i.setUTXO(utxo);
         }
 
+
         //check if transaction is valid:
-        if(getInputsValue() < minimumTransaction) {
+        if (getInputsValue() < minimumTransaction) {
             System.out.println("Transaction Inputs too small: " + getInputsValue());
             return false;
         }
@@ -83,7 +89,7 @@ public class Transaction {
     }
 
     //Verifies any data that has been signed hasn't been tampered with
-    public boolean verifySignature(){
+    public boolean verifySignature() {
         String data = BlockchainUtils.getStringFromKey(sender) +
                 BlockchainUtils.getStringFromKey(recipient) +
                 Float.toString(value);
@@ -93,14 +99,14 @@ public class Transaction {
 
     public float getInputsValue() {
         float total = 0;
-        for(TransactionInput i : inputs) {
-            if(i.getUTXO() != null) total += i.getUTXO().getValue();
+        for (TransactionInput i : inputs) {
+            if (i.getUTXO() != null) total += i.getUTXO().getValue();
         }
         return total;
     }
 
     //Getters and Setters
-    public String getTransactionID() {
+    public String getTransactionId() {
         return transactionId;
     }
 
@@ -110,11 +116,9 @@ public class Transaction {
     }
 
 
-
     public PublicKey getRecipient() {
         return recipient;
     }
-
 
 
     public float getValue() {
@@ -143,11 +147,9 @@ public class Transaction {
     }
 
 
-
     public static int getSequence() {
         return sequence;
     }
 
 
-
-    }
+}
