@@ -1,11 +1,9 @@
 package com.jessesegall.blockchain;
 
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
 
 import java.nio.charset.StandardCharsets;
 import java.security.*;
-import java.security.spec.ECGenParameterSpec;
 
 // Utility functions.
 public class BlockchainUtils {
