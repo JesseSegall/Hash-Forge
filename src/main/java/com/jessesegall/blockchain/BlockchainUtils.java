@@ -1,4 +1,5 @@
 package com.jessesegall.blockchain;
+
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
 
@@ -36,16 +37,16 @@ public class BlockchainUtils {
     /*
     Generates a digital signature using ECDSA
      */
-    public static byte[] applyECDSASig(PrivateKey privateKey, String input){
+    public static byte[] applyECDSASig(PrivateKey privateKey, String input) {
         Signature dsa;
-        byte[] output = new byte[0];
+        byte[] output;
         try {
             dsa = Signature.getInstance("ECDSA", "BC");
             dsa.initSign(privateKey);
             byte[] strByte = input.getBytes();
             dsa.update(strByte);
             output = dsa.sign();
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return output;
@@ -55,18 +56,18 @@ public class BlockchainUtils {
     Verifies the digital signature
      */
 
-    public static boolean verifyECDSASig(PublicKey publicKey, String data, byte[] signature){
+    public static boolean verifyECDSASig(PublicKey publicKey, String data, byte[] signature) {
         try {
             Signature ecdsaVerify = Signature.getInstance("ECDSA", "BC");
             ecdsaVerify.initVerify(publicKey);
             ecdsaVerify.update(data.getBytes());
             return ecdsaVerify.verify(signature);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static String getStringFromKey(Key key){
+    public static String getStringFromKey(Key key) {
         return Base64.toBase64String(key.getEncoded());
     }
 }
