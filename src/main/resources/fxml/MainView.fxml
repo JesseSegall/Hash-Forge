@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.jessesegall.ui.MainViewController" stylesheets="@style.css">
+    <top>
+        <VBox>
+            <MenuBar>
+                <Menu text="File">
+                    <MenuItem text="Exit" onAction="#handleExit"/>
+                </Menu>
+                <Menu text="Preferences">
+                    <MenuItem text="Settings" onAction="#handleSettings"/>
+                </Menu>
+                <Menu text="Help">
+                    <MenuItem text="About" onAction="#handleAbout"/>
+                </Menu>
+            </MenuBar>
+            <HBox spacing="5" alignment="CENTER" HBox.hgrow="ALWAYS">
+                <padding>
+                    <Insets top="10" right="10" bottom="0" left="10"/>
+                </padding>
+                <Button text="Overview" onAction="#showOverview" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                <Button text="Transactions" onAction="#showTransactions" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                <Button text="Send" onAction="#showSendReceive" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                <Button text="Mine" onAction="#showMine" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+            </HBox>
+        </VBox>
+    </top>
+    <center>
+        <StackPane fx:id="contentArea">
+            <!-- Content will be swapped here -->
+        </StackPane>
+    </center>
+</BorderPane>
