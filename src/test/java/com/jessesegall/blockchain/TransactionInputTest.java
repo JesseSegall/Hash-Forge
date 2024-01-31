@@ -23,12 +23,12 @@ class TransactionInputTest {
         PublicKey publicKey = keyPair.getPublic();
         transactionOutput = new TransactionOutput(publicKey, 10, "parentTransactionId");
         transactionInput = new TransactionInput("outputId");
-        transactionInput.setUTXO(transactionOutput);
+        transactionInput.setReferencedOutput(transactionOutput);
     }
 
     @Test
     void testGetUTXO() {
-        assertEquals(transactionOutput, transactionInput.getUTXO(), "GetUTXO should return the correct UTXO.");
+        assertEquals(transactionOutput, transactionInput.getReferencedOutput(), "GetUTXO should return the correct UTXO.");
     }
 
 

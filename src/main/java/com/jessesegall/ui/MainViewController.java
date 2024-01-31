@@ -46,6 +46,7 @@ public class MainViewController {
             Node view = loader.load();
             contentArea.getChildren().setAll(view);
         } catch (IOException e) {
+            //TODO logger
             e.printStackTrace();
             // Handle the exception, perhaps show an error message
         }

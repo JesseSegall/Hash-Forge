@@ -5,7 +5,7 @@
 <?import javafx.geometry.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.jessesegall.ui.MainViewController" stylesheets="@style.css">
+            fx:controller="com.jessesegall.ui.MainViewController" stylesheets="@../style.css">
     <top>
         <VBox>
             <MenuBar>

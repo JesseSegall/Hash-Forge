@@ -48,7 +48,7 @@ class TransactionTest {
         // Set up a list of inputs for the transaction
         List<TransactionInput> inputs = new ArrayList<>();
         transactionInput = new TransactionInput(transactionOutput.getId());
-        transactionInput.setUTXO(transactionOutput);
+        transactionInput.setReferencedOutput(transactionOutput);
         inputs.add(transactionInput);
 
         // Create a transaction from the sender to the recipient
