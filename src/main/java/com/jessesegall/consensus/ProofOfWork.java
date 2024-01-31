@@ -5,14 +5,14 @@ import com.jessesegall.blockchain.BlockchainUtils;
 
 // Proof-of-work algorithm.
 public class ProofOfWork {
-    private  int difficulty;
+    private int difficulty;
 
 
-    public ProofOfWork(int difficulty){
-        this.difficulty=difficulty;
+    public ProofOfWork(int difficulty) {
+        this.difficulty = difficulty;
     }
 
-    public void mine(Block block){
+    public void mine(Block block) {
         String target = new String(new char[difficulty]).replace('\0', '0'); // Create a string with difficulty * "0"
         while (!block.getHash().substring(0, difficulty).equals(target)) {
             block.incrementNonce(); // Increase nonce to try a new hash
@@ -22,8 +22,8 @@ public class ProofOfWork {
     }
 
     //Double hashing
-    private String calculatedDoubleHash(Block block){
-        String input = block.getPreviousHash() + Long.toString(block.getTimeStamp()) + Integer.toString(block.getNonce()) + block.getTransactions();
+    private String calculatedDoubleHash(Block block) {
+        String input = block.getPreviousHash() + block.getTimeStamp() + block.getNonce() + block.getTransactions();
         String hashedOnce = BlockchainUtils.applySha256(input);
         return BlockchainUtils.applySha256(hashedOnce);
     }

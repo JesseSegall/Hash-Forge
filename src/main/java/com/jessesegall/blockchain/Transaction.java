@@ -35,7 +35,7 @@ public class Transaction {
         return BlockchainUtils.applySha256(
                 BlockchainUtils.getStringFromKey(sender) +
                         BlockchainUtils.getStringFromKey(recipient) +
-                        Float.toString(value) + sequence
+                        value + sequence
         );
     }
 
@@ -43,12 +43,13 @@ public class Transaction {
     public void generateSignature(PrivateKey privateKey) {
         String data = BlockchainUtils.getStringFromKey(sender) +
                 BlockchainUtils.getStringFromKey(recipient) +
-                Float.toString(value);
+                value;
         signature = BlockchainUtils.applyECDSASig(privateKey, data);
     }
 
     public boolean processTransaction(UTXOManager utxoManager) {
         if (!verifySignature()) {
+            //TODO add logger
             System.out.println("Transaction Signature failed to verify");
             return false;
         }
@@ -59,11 +60,12 @@ public class Transaction {
                 System.out.println("No UTXO found for input: " + i.getTransactionOutputId());
                 return false;
             }
-            i.setUTXO(utxo);
+            i.setReferencedOutput(utxo);
         }
 
 
         //check if transaction is valid:
+        //TODO add logger
         if (getInputsValue() < minimumTransaction) {
             System.out.println("Transaction Inputs too small: " + getInputsValue());
             return false;
@@ -81,7 +83,7 @@ public class Transaction {
 
         // Remove the spent transaction inputs from the UTXO list
         inputs.stream()
-                .map(TransactionInput::getUTXO)
+                .map(TransactionInput::getReferencedOutput)
                 .filter(Objects::nonNull)
                 .forEach(utxo -> utxoManager.removeUTXO(utxo.getId()));
 
@@ -92,7 +94,7 @@ public class Transaction {
     public boolean verifySignature() {
         String data = BlockchainUtils.getStringFromKey(sender) +
                 BlockchainUtils.getStringFromKey(recipient) +
-                Float.toString(value);
+                value;
         return BlockchainUtils.verifyECDSASig(sender, data, signature);
     }
 
@@ -100,7 +102,7 @@ public class Transaction {
     public float getInputsValue() {
         float total = 0;
         for (TransactionInput i : inputs) {
-            if (i.getUTXO() != null) total += i.getUTXO().getValue();
+            if (i.getReferencedOutput() != null) total += i.getReferencedOutput().getValue();
         }
         return total;
     }

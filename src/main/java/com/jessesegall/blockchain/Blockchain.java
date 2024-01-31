@@ -87,7 +87,7 @@ public class Blockchain {
     private void updateUTXOSet(Block block) {
         for (Transaction transaction : block.getTransactions()) {
             for (TransactionInput input : transaction.getInputs()) {
-                utxoManager.removeUTXO(input.getUTXO().getId());
+                utxoManager.removeUTXO(input.getReferencedOutput().getId());
             }
             for (TransactionOutput output : transaction.getOutputs()) {
                 utxoManager.addUTXO(output);
