@@ -12,15 +12,15 @@ public class TransactionInput {
         this.transactionOutputId = transactionOutputId;
     }
 
-    public void setReferencedOutput(TransactionOutput referencedOutput) {
-        this.referencedOutput = referencedOutput;
-    }
-
     public String getTransactionOutputId() {
         return transactionOutputId;
     }
 
     public TransactionOutput getReferencedOutput() {
         return referencedOutput;
+    }
+
+    public void setReferencedOutput(TransactionOutput referencedOutput) {
+        this.referencedOutput = referencedOutput;
     }
 }

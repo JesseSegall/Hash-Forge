@@ -10,16 +10,14 @@ import java.util.Objects;
 public class Transaction {
     // TODO this is just a placeholder value, constants will be set in Blockchain class
     public static final float minimumTransaction = 0.1f;
+    private static int sequence = 0;
     private String transactionId;
     private PublicKey sender;
     private PublicKey recipient;
     private float value;
     private byte[] signature;
-
     private List<TransactionInput> inputs;
     private List<TransactionOutput> outputs = new ArrayList<>();
-
-    private static int sequence = 0;
 
     public Transaction(PublicKey from, PublicKey to, float value, List<TransactionInput> inputs) {
         this.sender = from;
@@ -29,6 +27,10 @@ public class Transaction {
     }
 
     // Calculates transaction hash which will be used for its ID
+
+    public static int getSequence() {
+        return sequence;
+    }
 
     private String calculateHash() {
         sequence++;
@@ -62,7 +64,6 @@ public class Transaction {
             }
             i.setReferencedOutput(utxo);
         }
-
 
         //check if transaction is valid:
         //TODO add logger
@@ -98,11 +99,12 @@ public class Transaction {
         return BlockchainUtils.verifyECDSASig(sender, data, signature);
     }
 
-
     public float getInputsValue() {
         float total = 0;
         for (TransactionInput i : inputs) {
-            if (i.getReferencedOutput() != null) total += i.getReferencedOutput().getValue();
+            if (i.getReferencedOutput() != null) {
+                total += i.getReferencedOutput().getValue();
+            }
         }
         return total;
     }
@@ -112,16 +114,13 @@ public class Transaction {
         return transactionId;
     }
 
-
     public PublicKey getSender() {
         return sender;
     }
 
-
     public PublicKey getRecipient() {
         return recipient;
     }
-
 
     public float getValue() {
         return value;
@@ -135,7 +134,6 @@ public class Transaction {
         return signature;
     }
 
-
     public List<TransactionInput> getInputs() {
         return inputs;
     }
@@ -148,9 +146,8 @@ public class Transaction {
         return outputs;
     }
 
-
-    public static int getSequence() {
-        return sequence;
+    public void setOutputs(List<TransactionOutput> outputs) {
+        this.outputs = outputs;
     }
 
 
