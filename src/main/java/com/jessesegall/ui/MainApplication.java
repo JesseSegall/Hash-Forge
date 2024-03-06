@@ -1,5 +1,7 @@
 package com.jessesegall.ui;
 
+import com.jessesegall.blockchain.Blockchain;
+import com.jessesegall.network.P2PNetwork;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -18,7 +20,14 @@ public class MainApplication extends Application {
         primaryStage.setMinWidth(800);
         primaryStage.setMinHeight(600);
         primaryStage.show();
+
+//        Blockchain blockchain = new Blockchain(7);
+//        new Thread(() -> {
+//            P2PNetwork network = new P2PNetwork(8080, blockchain);
+//            network.start();
+//        }).start();
     }
+
 
     public static void main(String[] args) {
         launch(args);
