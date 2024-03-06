@@ -9,7 +9,9 @@ public class Main {
     static {
         Security.addProvider(new BouncyCastleProvider()); // Register BC as a sec provider
     }
+
     public static void main(String[] args) {
+
 
     }
 }

@@ -10,16 +10,14 @@ import java.util.Objects;
 public class Transaction {
     // TODO this is just a placeholder value, constants will be set in Blockchain class
     public static final float minimumTransaction = 0.1f;
+    private static int sequence = 0;
     private String transactionId;
     private PublicKey sender;
     private PublicKey recipient;
     private float value;
     private byte[] signature;
-
     private List<TransactionInput> inputs;
     private List<TransactionOutput> outputs = new ArrayList<>();
-
-    private static int sequence = 0;
 
     public Transaction(PublicKey from, PublicKey to, float value, List<TransactionInput> inputs) {
         this.sender = from;
@@ -30,12 +28,16 @@ public class Transaction {
 
     // Calculates transaction hash which will be used for its ID
 
+    public static int getSequence() {
+        return sequence;
+    }
+
     private String calculateHash() {
         sequence++;
         return BlockchainUtils.applySha256(
                 BlockchainUtils.getStringFromKey(sender) +
                         BlockchainUtils.getStringFromKey(recipient) +
-                        Float.toString(value) + sequence
+                        value + sequence
         );
     }
 
@@ -43,12 +45,13 @@ public class Transaction {
     public void generateSignature(PrivateKey privateKey) {
         String data = BlockchainUtils.getStringFromKey(sender) +
                 BlockchainUtils.getStringFromKey(recipient) +
-                Float.toString(value);
+                value;
         signature = BlockchainUtils.applyECDSASig(privateKey, data);
     }
 
     public boolean processTransaction(UTXOManager utxoManager) {
         if (!verifySignature()) {
+            //TODO add logger
             System.out.println("Transaction Signature failed to verify");
             return false;
         }
@@ -59,11 +62,11 @@ public class Transaction {
                 System.out.println("No UTXO found for input: " + i.getTransactionOutputId());
                 return false;
             }
-            i.setUTXO(utxo);
+            i.setReferencedOutput(utxo);
         }
 
-
         //check if transaction is valid:
+        //TODO add logger
         if (getInputsValue() < minimumTransaction) {
             System.out.println("Transaction Inputs too small: " + getInputsValue());
             return false;
@@ -81,7 +84,7 @@ public class Transaction {
 
         // Remove the spent transaction inputs from the UTXO list
         inputs.stream()
-                .map(TransactionInput::getUTXO)
+                .map(TransactionInput::getReferencedOutput)
                 .filter(Objects::nonNull)
                 .forEach(utxo -> utxoManager.removeUTXO(utxo.getId()));
 
@@ -92,15 +95,16 @@ public class Transaction {
     public boolean verifySignature() {
         String data = BlockchainUtils.getStringFromKey(sender) +
                 BlockchainUtils.getStringFromKey(recipient) +
-                Float.toString(value);
+                value;
         return BlockchainUtils.verifyECDSASig(sender, data, signature);
     }
-
 
     public float getInputsValue() {
         float total = 0;
         for (TransactionInput i : inputs) {
-            if (i.getUTXO() != null) total += i.getUTXO().getValue();
+            if (i.getReferencedOutput() != null) {
+                total += i.getReferencedOutput().getValue();
+            }
         }
         return total;
     }
@@ -110,16 +114,13 @@ public class Transaction {
         return transactionId;
     }
 
-
     public PublicKey getSender() {
         return sender;
     }
 
-
     public PublicKey getRecipient() {
         return recipient;
     }
-
 
     public float getValue() {
         return value;
@@ -133,7 +134,6 @@ public class Transaction {
         return signature;
     }
 
-
     public List<TransactionInput> getInputs() {
         return inputs;
     }
@@ -146,9 +146,8 @@ public class Transaction {
         return outputs;
     }
 
-
-    public static int getSequence() {
-        return sequence;
+    public void setOutputs(List<TransactionOutput> outputs) {
+        this.outputs = outputs;
     }
 
 

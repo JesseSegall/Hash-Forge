@@ -1,0 +1,19 @@
+.header-label {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2e3b4e;
+}
+
+.bold-label {
+    -fx-font-weight: bold;
+}
+
+.balance-field {
+    -fx-pref-width: 200px;
+}
+
+.view-button {
+    -fx-background-color: #daa825;
+    -fx-text-fill: white;
+}
+

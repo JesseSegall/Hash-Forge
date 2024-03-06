@@ -50,7 +50,7 @@ class BlockTest {
         transaction.generateSignature(senderPrivateKey);
 
         TransactionInput input = new TransactionInput(utxo.getId());
-        input.setUTXO(utxo);
+        input.setReferencedOutput(utxo);
         transaction.getInputs().add(input);
 
         TransactionOutput outputToRecipient = new TransactionOutput(recipientPublicKey, 5, "childTransactionId1");
