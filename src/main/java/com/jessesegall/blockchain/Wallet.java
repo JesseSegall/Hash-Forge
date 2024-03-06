@@ -1,19 +1,22 @@
 package com.jessesegall.blockchain;
 
+import com.jessesegall.network.P2PNetwork;
 
 import java.security.*;
 import java.security.spec.ECGenParameterSpec;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-// Manages user's keys and transactions.
 public class Wallet {
     private PrivateKey privateKey;
     private PublicKey publicKey;
-    private UTXOManager utxoManager;
+    private Blockchain blockchain;
+    private P2PNetwork p2pNetwork;
 
-    public Wallet(UTXOManager utxoManager) {
-        this.utxoManager = utxoManager;
+    public Wallet(Blockchain blockchain, P2PNetwork p2pNetwork) {
+        this.blockchain = blockchain;
+        this.p2pNetwork = p2pNetwork;
         generateKeyPair();
     }
 
@@ -37,7 +40,8 @@ public class Wallet {
 
     public float getBalance() {
         float total = 0;
-        for (TransactionOutput utxo : utxoManager.getAllUTXOs().values()) {
+        for (Map.Entry<String, TransactionOutput> entry : blockchain.getUtxoManager().getAllUTXOs().entrySet()) {
+            TransactionOutput utxo = entry.getValue();
             if (utxo.isMine(publicKey)) {
                 total += utxo.getValue();
             }
@@ -50,28 +54,33 @@ public class Wallet {
             System.out.println("Not enough funds to send transaction. Transaction discarded.");
             return null;
         }
-        // Create array list of inputs
+
         List<TransactionInput> inputs = new ArrayList<>();
         float total = 0;
 
-        for (TransactionOutput utxo : utxoManager.getAllUTXOs().values()) {
+        for (Map.Entry<String, TransactionOutput> entry : blockchain.getUtxoManager().getAllUTXOs().entrySet()) {
+            TransactionOutput utxo = entry.getValue();
             if (utxo.isMine(publicKey) && total < value) {
                 total += utxo.getValue();
                 inputs.add(new TransactionInput(utxo.getId()));
-
             }
         }
 
         Transaction newTransaction = new Transaction(publicKey, recipient, value, inputs);
         newTransaction.generateSignature(privateKey);
 
-        // remove the UTXOs from manager after they are spent
         for (TransactionInput input : inputs) {
-            utxoManager.removeUTXO(input.getTransactionOutputId());
+            blockchain.getUtxoManager().removeUTXO(input.getTransactionOutputId());
         }
+
+        // Add the transaction to the transaction pool
+        blockchain.getTransactionPool().addTransaction(newTransaction);
+
+        // Broadcast the transaction to the network
+        p2pNetwork.broadcastTransaction(newTransaction);
+
         return newTransaction;
     }
-
 
     public PrivateKey getPrivateKey() {
         return privateKey;
