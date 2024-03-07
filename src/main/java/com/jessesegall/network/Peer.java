@@ -35,6 +35,15 @@ public class Peer {
         }
     }
 
+    public void sendBlock(Block block) {
+        try {
+            outputStream.writeObject(block);
+            outputStream.flush();
+        } catch (IOException e) {
+            throw new RuntimeException("Error sending block", e);
+        }
+    }
+
     public Blockchain requestBlockchain() {
         try {
             outputStream.writeObject("REQUEST_BLOCKCHAIN");
@@ -45,14 +54,6 @@ public class Peer {
         }
     }
 
-    public void sendBlock(Block block) {
-        try {
-            outputStream.writeObject(block);
-            outputStream.flush();
-        } catch (IOException e) {
-            throw new RuntimeException("Error sending block", e);
-        }
-    }
 
     public void sendTransaction(Transaction transaction) {
         try {

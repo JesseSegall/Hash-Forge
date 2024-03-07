@@ -1,7 +1,6 @@
 package com.jessesegall.blockchain;
 
 import java.security.PublicKey;
-import java.util.Base64;
 
 public class TransactionOutput {
     private String id;
@@ -20,9 +19,9 @@ public class TransactionOutput {
                         parentTransactionId
         );
     }
-// make getters and setters for all fields
 
-    public boolean isMine(PublicKey publicKey){
+
+    public boolean isMine(PublicKey publicKey) {
         return (publicKey.equals(recipient));
     }
 
