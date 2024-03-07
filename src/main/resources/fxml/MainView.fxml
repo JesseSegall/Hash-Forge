@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<?import javafx.geometry.*?>
-
-<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/21"
             fx:controller="com.jessesegall.ui.MainViewController" stylesheets="@../style.css">
     <top>
         <VBox>
@@ -33,6 +32,9 @@
     <center>
         <StackPane fx:id="contentArea">
             <!-- Content will be swapped here -->
+            <VBox>
+                <Label fx:id="balanceLabel"/>
+            </VBox>
         </StackPane>
     </center>
 </BorderPane>
