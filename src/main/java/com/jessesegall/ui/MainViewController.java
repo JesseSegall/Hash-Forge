@@ -55,6 +55,7 @@ public class MainViewController {
         blockchain = new Blockchain(7);
         utxoManager = new UTXOManager();
         transactionPool = new TransactionPool();
+        miner = new Miner(blockchain, utxoManager, wallet, p2pNetwork);
 
         List<String> knownNodes = new ArrayList<>();
         knownNodes.add("localhost:8081");
@@ -71,6 +72,14 @@ public class MainViewController {
         updateWalletBalance();
 
         showOverview();
+    }
+
+
+    // TODO
+    // Add miner button and call miner.startMining() when clicked
+    @FXML
+    private void handleStartMining() {
+        miner.startMining();
     }
 
     private void updateWalletBalance() {
