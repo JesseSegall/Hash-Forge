@@ -5,12 +5,19 @@ import com.jessesegall.blockchain.Blockchain;
 import com.jessesegall.blockchain.Transaction;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 
 public class P2PNetwork {
+    //TODO: Add real seed nodes
+    private static final List<String> SEED_NODES = Arrays.asList(
+            "seed1.example.com:8080",
+            "seed2.example.com:8080"
+    );
     private static List<Peer> peers;
     private ServerSocket serverSocket;
     private Blockchain blockchain;
@@ -34,17 +41,20 @@ public class P2PNetwork {
         }
     }
 
+    public static List<Peer> getPeers() {
+        return peers;
+    }
+
     public void broadcastTransaction(Transaction transaction) {
         for (Peer peer : peers) {
             peer.sendTransaction(transaction);
         }
     }
 
-
     public void start() {
         // Connect to known nodes
-        for (String nodeAddress : knownNodes) {
-            String[] parts = nodeAddress.split(":");
+        for (String seedNode : SEED_NODES) {
+            String[] parts = seedNode.split(":");
             String host = parts[0];
             int port = Integer.parseInt(parts[1]);
             connectToPeer(host, port);
@@ -79,6 +89,14 @@ public class P2PNetwork {
     private void handleNewPeer(Peer peer) {
         // Send the current blockchain to the new peer
         peer.sendBlockchain(blockchain);
+
+        // Req peer's known nodes
+        List<String> peerKnownNodes = peer.requestKnownNodes();
+        for (String nodeAddress : peerKnownNodes) {
+            if (!knownNodes.contains(nodeAddress)) {
+                knownNodes.add(nodeAddress);
+            }
+        }
     }
 
     private void handleReceivedTransaction(Transaction transaction) {
